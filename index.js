@@ -16,5 +16,15 @@ db.connect( ()=>{
 
 
 function menu(){
-    
+    // view all deparrtments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+
+inquirer.prompt([
+    {
+        type:'list',
+        message:'What would you like to do?',
+        name:'option',
+        choices:[ 'view all deparrtments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
+    }
+])
+
 }
