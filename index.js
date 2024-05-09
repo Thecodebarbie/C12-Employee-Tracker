@@ -30,7 +30,19 @@ function menu() {
             if (response.option === 'view all employees') {
                 viewAllEmployees()
             }
+            else if (response.option === 'view all roles') {
+                viewAllRoles()
+            }
         })
+}
+function viewAllRoles(){
+    db.query(`SELECT role.id as id, title, name as department, salary
+    FROM role
+    LEFT JOIN department 
+    ON role.department_id=department.id;`, (err,data)=>{
+         printTable(data)
+         menu()
+    })
 }
 function viewAllEmployees(){
     db.query(`SELECT employee.id as id, employee.first_name, employee.last_name, title, 
@@ -41,7 +53,6 @@ function viewAllEmployees(){
    LEFT JOIN department ON role.department_id=department.id
    LEFT JOIN employee as managerTable 
    ON employee.manager_id=managerTable.id;`, (err,data)=>{
-
 
      printTable(data)
      menu()
