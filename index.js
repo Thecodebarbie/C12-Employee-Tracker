@@ -36,6 +36,9 @@ function menu() {
             else if (response.option === 'view all departments') { // condition for viewing all departments
                 viewAllDepartments();
             }
+            else if(response.option === 'add an employee'){
+                addEmployee()
+            }
         })
 }
 function viewAllDepartments() {
@@ -49,6 +52,57 @@ function viewAllDepartments() {
         }
     });
 }
+
+function addEmployee() {
+    let roleData; // Define roleData outside the promise chain to make it accessible in the entire function
+    db.promise().query(`SELECT id as value, title as name from role`)
+        .then(([roleResult, _]) => {
+            roleData = roleResult; // Assign roleResult to roleData
+            return db.promise().query(`SELECT id as value, CONCAT(first_name, ' ', last_name) from employee where manager_id is null`);
+        })
+        .then(([employeeData, _]) => {
+            // Prompt user for employee details
+            return inquirer.prompt([
+                {
+                    type: 'input',
+                    message: 'What is your first name?',
+                    name: 'first_name'
+                },
+                {
+                    type: 'input',
+                    message: 'What is your last name?',
+                    name: 'last_name'
+                },
+                {
+                    type: 'list',
+                    message: 'What is your title?',
+                    name: 'title',
+                    choices: roleData // Use roleData here
+                },
+                {
+                    type: 'list',
+                    message: 'Who is your manager?',
+                    name: 'manager_id',
+                    choices: employeeData
+                }
+            ]);
+        })
+        .then(response => {
+            // Insert employee data into the database
+            return db.promise().query(`insert into employee(first_name,last_name,role_id,manager_id) values (?, ?, ?, ?)`, [response.first_name, response.last_name, response.title, response.manager_id]);
+        })
+        .then(() => {
+            // After inserting employee, view all employees
+            return viewAllEmployees();
+        })
+        .catch(err => {
+            // Handle errors
+            console.error('Error adding employee:', err);
+            menu();
+        });
+}
+
+
 function viewAllRoles(){
     db.query(`SELECT role.id as id, title, name as department, salary
     FROM role
