@@ -23,17 +23,31 @@ function menu() {
             type: 'list',
             message: 'What would you like to do?',
             name: 'option',
-            choices: ['view all deparrtments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
+            choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
         }
     ])
         .then(response => {
             if (response.option === 'view all employees') {
                 viewAllEmployees()
             }
-            else if (response.option === 'view all roles') {
+            else if (response.option === 'view all roles') {// condition for viewing all roles
                 viewAllRoles()
             }
+            else if (response.option === 'view all departments') { // condition for viewing all departments
+                viewAllDepartments();
+            }
         })
+}
+function viewAllDepartments() {
+    db.query(`SELECT * FROM department;`, (err, data) => {
+        if (err) {
+            console.error('Error retrieving departments:', err);
+            menu(); // Return to menu in case of error
+        } else {
+            printTable(data); // Print departments data in a formatted table
+            menu(); // Return to menu
+        }
+    });
 }
 function viewAllRoles(){
     db.query(`SELECT role.id as id, title, name as department, salary
