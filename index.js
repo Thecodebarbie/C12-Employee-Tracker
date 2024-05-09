@@ -26,5 +26,10 @@ inquirer.prompt([
         choices:[ 'view all deparrtments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
     }
 ])
+.then(response=>{
+    if(response.option === 'view all employees'){
+        viewAllEmployees()
+    }
+})
 
 }
